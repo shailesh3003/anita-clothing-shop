@@ -1,0 +1,76 @@
+.insights-page { display: grid; gap: 19px; }
+.insight-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; }
+.insight-heading h2 { margin: 0; color: var(--navy); font-family: 'Playfair Display', Georgia, serif; font-size: 23px; font-weight: 500; letter-spacing: -.015em; }
+.insight-heading p:not(.eyebrow) { margin: 6px 0 0; color: var(--ink-muted); font-size: 12px; }
+.business-date, .report-period-caption { color: #747D87; font-size: 11px; }
+.business-date { padding: 8px 10px; background: white; border: 1px solid var(--line); border-radius: 7px; font-variant-numeric: tabular-nums; }
+.metric-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
+.metric-card { position: relative; min-height: 136px; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 20px 21px; overflow: hidden; background: white; border: 1px solid var(--line); border-radius: 11px; box-shadow: var(--shadow-card); }
+.metric-card::after { position: absolute; inset: 0 auto 0 0; width: 3px; content: ''; background: #E8E4DB; }
+.metric-primary { background: #FFFEFB; border-color: #E8DDC7; }
+.metric-primary::after { background: var(--gold); }
+.metric-card>span, .payment-total>span { color: #737D86; font-size: 11px; font-weight: 550; }
+.metric-card strong { color: var(--navy); font-size: clamp(22px, 2vw, 27px); font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: -.035em; }
+.metric-primary strong { color: #72592D; }
+.metric-card small { color: #8B9298; font-size: 10px; }
+.insight-panel { min-width: 0; padding: 19px 20px; background: white; border: 1px solid var(--line); border-radius: 11px; box-shadow: var(--shadow-card); }
+.insight-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 15px; }
+.insight-panel-heading .eyebrow { margin: 0 0 4px; font-size: 8px; }
+.insight-panel-heading h3 { margin: 0; color: var(--navy); font-size: 13px; font-weight: 650; }
+.payment-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; }
+.payment-total { min-width: 0; display: flex; flex-direction: column; gap: 7px; padding: 13px 14px; background: #F8F8F7; border: 1px solid #F0F1F1; border-radius: 8px; }
+.payment-total strong { overflow: hidden; color: var(--navy); font-size: 14px; font-weight: 650; font-variant-numeric: tabular-nums; text-overflow: ellipsis; }
+.insight-table-wrap { max-width: 100%; overflow: auto; border: 1px solid #ECEEEF; border-radius: 8px; }
+.insight-table { width: 100%; min-width: 540px; border-collapse: collapse; text-align: left; }
+.insight-table th { padding: 10px 12px; color: #747D86; background: #F7F8F8; font-size: 9px; font-weight: 700; letter-spacing: .075em; text-transform: uppercase; white-space: nowrap; }
+.insight-table td { padding: 12px; color: #46515C; border-top: 1px solid #EEF0F1; font-size: 11px; vertical-align: middle; }
+.insight-table tbody tr:hover td { background: #FBFBFA; }
+.insight-subtext { display: block; margin-top: 4px; color: #8B9298; font-size: 10px; }
+.insight-money { color: var(--navy) !important; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.insight-status { margin: 0; padding: 14px 2px; color: #838B92; font-size: 12px; }
+.insight-error { margin: 0; padding: 11px 13px; color: #8E322F; background: #FFF2F0; border: 1px solid #F0D2CF; border-radius: 7px; font-size: 12px; }
+.report-filters { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 11px; padding: 15px; background: white; border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow-card); }
+.report-filters label { flex: 1 1 185px; min-width: 165px; display: flex; flex-direction: column; gap: 6px; color: #4F5963; font-size: 10px; font-weight: 650; }
+.report-filters select, .report-filters input { width: 100%; height: 39px; padding: 0 10px; color: var(--navy); background: #FCFCFB; border: 1px solid #DDE1E3; border-radius: 7px; font-size: 11px; }
+.report-period-caption { margin-top: -8px; font-variant-numeric: tabular-nums; }
+.report-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.report-record-heading { align-items: flex-end; }
+.report-record-heading p:not(.eyebrow) { margin: 5px 0 0; color: #838B92; font-size: 10px; }
+.export-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+.export-button { min-height: 36px; display: inline-flex; flex: 1 1 auto; align-items: center; justify-content: center; gap: 6px; padding: 0 10px; color: white; background: var(--navy); border: 1px solid var(--navy); border-radius: 7px; text-decoration: none; font-size: 10px; font-weight: 650; white-space: nowrap; transition: color .15s ease, background .15s ease, border-color .15s ease; }
+.export-button:hover { background: #2D3D4F; border-color: #2D3D4F; }
+.export-button:focus-visible { outline-offset: 2px; }
+.export-button.export-secondary { color: #45515C; background: white; border-color: #DDE1E3; }
+.export-button.export-secondary:hover { color: var(--navy); background: #F7F8F8; border-color: #BFC6CB; }
+.report-success { margin: 0; padding: 9px 12px; color: #326540; background: #F1FAF3; border: 1px solid #CFE6D6; border-radius: 7px; font-size: 11px; }
+.insights-page .eyebrow { font-size: 8px; }
+
+@media (max-width: 820px) {
+  .metric-card { min-height: 126px; padding: 17px; }
+}
+@media (max-width: 620px) {
+  .insights-page { gap: 14px; }
+  .workspace-nav { width: 100%; }
+  .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .metric-primary { grid-column: 1 / -1; }
+  .metric-card { min-height: 112px; padding: 15px; }
+  .metric-card strong { font-size: 21px; }
+  .payment-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .insight-panel { padding: 15px 13px; }
+  .report-filters label { flex: 1 1 calc(50% - 8px); min-width: 135px; }
+  .report-record-heading { align-items: flex-start; flex-direction: column; }
+  .export-actions { width: 100%; }
+  .export-button { flex: 1 1 120px; }
+}
+@media (max-width: 430px) {
+  .insight-heading { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .insight-heading h2 { font-size: 21px; }
+  .report-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .report-metrics .metric-primary { grid-column: auto; }
+  .metric-card { min-height: 106px; padding: 12px; }
+  .metric-card strong { font-size: 18px; }
+  .payment-total { padding: 11px; }
+  .payment-total strong { font-size: 13px; }
+  .report-filters label { flex-basis: 100%; }
+  .export-button { flex-basis: 100%; }
+}

@@ -1,0 +1,44 @@
+.inventory-page { display: grid; gap: 22px; }
+.inventory-heading, .inventory-panel-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.inventory-heading h2 { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 22px; }
+.inventory-heading p, .inventory-help { color: #626D79; font-size: 12px; line-height: 1.7; }
+.inventory-panel { padding: 22px; background: white; border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-card); }
+.inventory-panel-heading h3 { margin: 0 0 15px; font-size: 16px; }
+.inventory-page button, .picker-pages button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 36px; padding: 7px 11px; color: var(--navy); background: white; border: 1px solid #D6DBDF; border-radius: 7px; cursor: pointer; font-size: 12px; }
+.inventory-page button:hover:not(:disabled), .picker-pages button:hover:not(:disabled) { background: var(--cream); border-color: var(--gold); }
+.inventory-page button:disabled, .picker-pages button:disabled { opacity: .5; cursor: not-allowed; }
+.inventory-page .inventory-primary { color: white; background: var(--navy); border-color: var(--navy); }
+.inventory-page .inventory-primary:hover:not(:disabled) { background: #344358; }
+.inventory-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.inventory-fields { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin: 18px 0; }
+.inventory-fields label, .inventory-filters label, .product-picker label { display: grid; gap: 7px; color: #3D4854; font-size: 12px; font-weight: 600; }
+.inventory-fields input, .inventory-fields select, .inventory-filters input, .inventory-filters select, .product-picker input, .product-picker select { width: 100%; min-width: 0; min-height: 42px; padding: 9px 11px; background: #FCFCFB; color: var(--navy); border: 1px solid #D9DEE2; border-radius: 7px; font-size: 13px; }
+.inventory-wide { grid-column: span 2; }
+.inventory-reason { display: grid; gap: 8px; margin: 18px 0; font-size: 13px; }
+.inventory-reason input { width: 100%; min-height: 42px; padding: 9px 11px; border: 1px solid #D9DEE2; border-radius: 7px; }
+.inventory-page .inventory-remove { color: #963F36; border-color: #E3C6C1; }
+.inventory-filters { display: grid; grid-template-columns: minmax(180px,2fr) minmax(140px,1fr); gap: 15px; max-width: 640px; margin-bottom: 16px; }
+.inventory-table-wrap { width: 100%; overflow-x: auto; }
+.inventory-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; }
+.inventory-table th { padding: 12px 10px; background: #F7F8F9; color: #66717D; font-size: 11px; white-space: nowrap; }
+.inventory-table td { padding: 14px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.inventory-table small { display: block; margin-top: 5px; color: #737D87; font-size: 11px; overflow-wrap: anywhere; }
+.inventory-row-actions { display: flex; flex-wrap: wrap; gap: 6px; min-width: 160px; }
+.inventory-page .pagination button { width: auto; height: auto; min-height: 36px; }
+.stock-badge { display: block; width: fit-content; padding: 3px 6px; margin-top: 6px; border-radius: 4px; font-size: 10px; color: #67727C; background: #EFF1F3; }
+.stock-low { color: #7E5B14; background: #FFF5D9; }
+.stock-empty { color: #9A3430; background: #FFF0EE; }
+.product-picker { min-width: 0; display: grid; gap: 8px; }
+.product-picker .field-hint { line-height: 1.5; }
+.product-picker .sales-error { margin: 0; }
+.picker-pages { display: flex; justify-content: space-between; align-items: center; gap: 5px; font-size: 11px; }
+.picker-pages button { font-size: 10px; padding: 4px; min-height: 28px; }
+.sale-items-editor .item-row { align-items: start; }
+@media (max-width: 1100px) { .inventory-fields { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 560px) {
+  .inventory-heading { flex-direction: column; }
+  .inventory-panel { padding: 15px; }
+  .inventory-fields, .inventory-filters { grid-template-columns: 1fr; }
+  .inventory-wide { grid-column: auto; }
+  .inventory-actions { flex-wrap: wrap; }
+}
