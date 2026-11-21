@@ -2,6 +2,9 @@
   "name": "anita-clothing-shop",
   "private": true,
   "version": "1.0.0",
+  "engines": {
+    "node": "22.x"
+  },
   "workspaces": [
     "client",
     "server"
@@ -20,5 +23,9 @@
     "exceljs": {
       "uuid": "11.1.1"
     }
+  },
+  "optionalDependencies": {
+    "@esbuild/linux-x64": "0.25.12",
+    "@rollup/rollup-linux-x64-gnu": "4.65.1"
   }
 }
