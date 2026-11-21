@@ -29,6 +29,16 @@
 .stock-low { color: #7E5B14; background: #FFF5D9; }
 .stock-empty { color: #9A3430; background: #FFF0EE; }
 .product-picker { min-width: 0; display: grid; gap: 8px; }
+.product-combobox { position: relative; display: grid; gap: 7px; }
+.product-results { position: absolute; top: 100%; left: 0; right: 0; z-index: 20; max-height: 300px; overflow-y: auto; margin-top: 4px; padding: 5px; background: white; border: 1px solid #D9DEE2; border-radius: 8px; box-shadow: 0 8px 22px #202B391C; }
+.product-picker .product-option { display: grid; gap: 5px; width: 100%; padding: 10px; color: var(--navy); background: white; border: 0; border-radius: 5px; text-align: left; cursor: pointer; white-space: normal; overflow-wrap: anywhere; }
+.product-option strong { font-size: 12px; font-weight: 600; }
+.product-option span { font-size: 11px; color: #626D79; }
+.product-picker .product-option:hover:not(:disabled), .product-picker .product-option-active, .product-picker .product-option[aria-selected="true"] { background: var(--cream); }
+.product-picker .product-option:disabled { opacity: .5; cursor: not-allowed; }
+.picker-status { padding: 10px; margin: 0; font-size: 12px; line-height: 1.5; color: #626D79; }
+.product-picker .clear-product { justify-self: start; padding: 2px 0; color: #626D79; background: transparent; border: 0; text-decoration: underline; font-size: 11px; cursor: pointer; }
+.product-combobox input:focus-visible, .product-option:focus-visible, .clear-product:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .product-picker .field-hint { line-height: 1.5; }
 .product-picker .sales-error { margin: 0; }
 .picker-pages { display: flex; justify-content: space-between; align-items: center; gap: 5px; font-size: 11px; }

@@ -1,5 +1,6 @@
 // Interface text only: shop records and API values are never translated.
 export const marathi = {
+  'Clear product': 'निवडलेली वस्तू काढा',
   'Summary': 'सारांश',
   'Shop summary': 'दुकानाचा सारांश',
   'Sales for your selected dates and stock available now.': 'निवडलेल्या तारखांमधील विक्री आणि सध्या उपलब्ध माल.',
