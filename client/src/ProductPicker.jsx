@@ -12,6 +12,7 @@ export default function ProductPicker({ item, onChange, allowLegacy = false, ref
   const [error, setError] = useState('')
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState(-1)
+  const [chosenProduct, setChosenProduct] = useState(null)
   const inputId = useId()
   const listId = `${inputId}-products`
   useEffect(() => {
@@ -26,8 +27,9 @@ export default function ProductPicker({ item, onChange, allowLegacy = false, ref
       .finally(() => { if (!controller.signal.aborted) setLoading(false) })
     return () => controller.abort()
   }, [search, page, refreshKey])
-  const selected = result.products.find(product => product.id === item.productId)
+  const selected = result.products.find(product => product.id === item.productId) || (chosenProduct?.id === item.productId ? chosenProduct : null)
   function choose(product) {
+    setChosenProduct(product)
     onChange(product ? { ...item, productId: product.id, itemName: productLabel(product), unitPrice: '' } : { ...item, productId: '', itemName: '' })
     setOpen(false); setSearch(''); setPage(1); setActive(-1)
   }
@@ -73,6 +75,6 @@ export default function ProductPicker({ item, onChange, allowLegacy = false, ref
     </div>
     {item.productId && <button className="clear-product" type="button" onClick={() => choose(null)}>{t(allowLegacy ? 'Legacy item (not stock tracked)' : 'Clear product')}</button>}
     {allowLegacy && !item.productId && <label>{t('Item name')}<input value={item.itemName} maxLength={240} onChange={event => onChange({ ...item, itemName: event.target.value })} required /></label>}
-    {selected && <span className="field-hint">{t('Available stock: {count}', { count: selected.stock })}</span>}
+    {selected && <><span className="field-hint">SKU: <strong>{selected.sku}</strong></span><span className="field-hint">{t('Available stock: {count}', { count: selected.stock })}</span></>}
   </div>
 }
