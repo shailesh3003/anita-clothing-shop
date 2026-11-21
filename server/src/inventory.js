@@ -53,6 +53,20 @@ async function transaction(res, next, operation) {
   } finally { client?.release() }
 }
 
+router.get('/summary', requireAdmin, async (_req, res, next) => {
+  try {
+    const result = await pool.query(`SELECT
+      count(*)::int AS "productCount",
+      coalesce(sum(stock),0)::text AS "availableUnits",
+      count(*) FILTER (WHERE is_active AND stock <= reorder_level)::int AS "lowStockCount",
+      count(*) FILTER (WHERE is_active AND stock = 0)::int AS "outOfStockCount",
+      round(coalesce(sum(stock * purchase_cost) FILTER (WHERE purchase_cost IS NOT NULL),0),2)::text AS "stockValue",
+      coalesce(sum(stock) FILTER (WHERE purchase_cost IS NULL),0)::text AS "missingCostUnits"
+      FROM inventory_products WHERE removed_at IS NULL`)
+    res.json({ ...result.rows[0], asOf: new Date().toISOString() })
+  } catch (error) { next(error) }
+})
+
 router.get('/', async (req, res, next) => {
   const parsed = listQuery.safeParse(req.query)
   if (!parsed.success) return res.status(400).json({ error: 'Check the inventory search and filters.' })

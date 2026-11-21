@@ -2,7 +2,7 @@ import { useLanguage, LanguageSelector } from './language.jsx'
 import { createElement, useEffect, useState } from 'react'
 import { ChartNoAxesCombined, Eye, EyeOff, LayoutDashboard, LogOut, Package, ShieldCheck, Store, UserPlus, UsersRound, WalletCards } from 'lucide-react'
 import Sales from './Sales.jsx'
-import { Dashboard, Reports } from './Insights.jsx'
+import { Dashboard, Reports, Summary } from './Insights.jsx'
 import Inventory from './Inventory.jsx'
 
 async function request(path, options = {}) {
@@ -116,6 +116,7 @@ function Workspace({ user, onLogout }) {
     { id: 'sales', label: 'Sales', icon: WalletCards },
     { id: 'inventory', label: 'Inventory', icon: Package },
     ...(user.role === 'ADMIN' ? [
+      { id: 'summary', label: 'Summary', icon: LayoutDashboard },
       { id: 'reports', label: 'Reports', icon: ChartNoAxesCombined },
       { id: 'staff', label: 'Team access', icon: UsersRound },
     ] : []),
@@ -144,6 +145,7 @@ function Workspace({ user, onLogout }) {
       {page === 'sales' && <Sales user={user} />}
       {page === 'inventory' && <Inventory user={user} />}
       {user.role === 'ADMIN' && page === 'reports' && <Reports />}
+      {user.role === 'ADMIN' && page === 'summary' && <Summary />}
       {user.role === 'ADMIN' && page === 'staff' && <><section className="admin-panel"><div className="panel-icon"><ShieldCheck size={20} /></div><div><h2>{t("Administrator access")}</h2><p>{t("Manage staff accounts from your protected admin workspace.")}</p></div><span className="role-tag">{t("ADMIN")}</span></section><AdminUsers /></>}
       </main>
     </div>

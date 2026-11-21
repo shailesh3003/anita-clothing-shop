@@ -72,6 +72,65 @@ export function Dashboard({ user }) {
   </div>
 }
 
+export function Summary() {
+  const { t, locale } = useLanguage()
+  const [from, setFrom] = useState(todayInShopTimezone)
+  const [to, setTo] = useState(todayInShopTimezone)
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [refresh, setRefresh] = useState(0)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    setData(null); setError('')
+    if (!from || !to || from > to) {
+      setLoading(false)
+      if (from && to) setError('Start date must be on or before end date.')
+      return () => controller.abort()
+    }
+    setLoading(true)
+    const query = new URLSearchParams({ period: 'custom', from, to })
+    Promise.all([request(`/reports?${query}`, { signal: controller.signal }), request('/inventory/summary', { signal: controller.signal })])
+      .then(([report, stock]) => { if (!controller.signal.aborted) setData({ report, stock }) })
+      .catch(err => { if (!controller.signal.aborted) setError(err.message) })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false) })
+    return () => controller.abort()
+  }, [from, to, refresh])
+
+  return <div className="insights-page">
+    <div className="insight-heading"><div><p className="eyebrow">{t('ADMINISTRATION')}</p><h2>{t('Shop summary')}</h2><p>{t('Sales for your selected dates and stock available now.')}</p></div></div>
+    <div className="report-filters">
+      <label>{t('From')}<input type="date" value={from} max={to || undefined} onChange={event => setFrom(event.target.value)} required /></label>
+      <label>{t('To')}<input type="date" value={to} min={from || undefined} onChange={event => setTo(event.target.value)} required /></label>
+      <button className="export-button" disabled={loading} onClick={() => setRefresh(value => value + 1)}>{t('Refresh summary')}</button>
+    </div>
+    {loading && <p className="insight-status" role="status">{t('Loading summary…')}</p>}
+    {error && <p className="insight-error" role="alert">{t(error)}</p>}
+    {!loading && !error && !data && <p className="insight-status">{t('Choose both dates to show the custom report.')}</p>}
+    {data && <>
+      <div className="report-period-caption">{dateLabel(data.report.from, locale)} – {dateLabel(data.report.to, locale)} · {t('Asia/Kolkata')}</div>
+      <section className="metric-grid" aria-label={t('Sales totals')}>
+        <article className="metric-card metric-primary"><span>{t('Net sales')}</span><strong>{amount(data.report.summary.totalAmount)}</strong><small>{t('Selected period')}</small></article>
+        <article className="metric-card"><span>{t('Transactions')}</span><strong>{data.report.summary.transactionCount}</strong><small>{t('Non-voided sales')}</small></article>
+      </section>
+      {data.report.summary.transactionCount === 0 && data.report.summary.returnCount === 0 && <p className="insight-status">{t('No sales or returns in this period.')}</p>}
+      <ReturnTotals summary={data.report.summary} />
+      {data.report.summary.profit && <ProfitSummary profit={data.report.summary.profit} />}
+      <section className="insight-panel"><div className="insight-panel-heading"><div><h3>{t('Payment methods')}</h3></div></div><div className="payment-grid">{Object.entries(methodLabels).map(([key, label]) => <div className="payment-total" key={key}><span>{t(label)}</span><strong>{amount(data.report.summary.payments[key])}</strong></div>)}</div></section>
+      <section className="insight-panel"><div className="insight-panel-heading"><div><h3>{t('Current stock summary')}</h3><p>{t('Current stock includes archived products; removed products are excluded. Date filters apply only to sales and returns.')}</p><p>{t('Updated at')}: {new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' }).format(new Date(data.stock.asOf))}</p></div></div>
+        <div className="payment-grid">{[
+          ['Products', data.stock.productCount], ['Available units', data.stock.availableUnits],
+          ['Low-stock products', data.stock.lowStockCount], ['Out-of-stock products', data.stock.outOfStockCount],
+          ['Stock value at purchase cost', amount(data.stock.stockValue)],
+        ].map(([label, value]) => <div className="payment-total" key={label}><span>{t(label)}</span><strong>{value}</strong></div>)}</div>
+        <p className="inventory-help">{t('Low-stock and out-of-stock counts include active products only. Low-stock count includes out-of-stock products.')}</p>
+        {data.stock.missingCostUnits !== '0' && <p className="inventory-help" role="status">{t('{count} stock units have no purchase cost and are excluded from stock value.', { count: data.stock.missingCostUnits })}</p>}
+      </section>
+    </>}
+  </div>
+}
+
 export function Reports() {
   const { t, locale } = useLanguage()
   const [period, setPeriod] = useState('day')

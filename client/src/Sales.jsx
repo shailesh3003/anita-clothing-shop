@@ -168,7 +168,6 @@ export default function Sales({ user }) {
       <form className="sale-form" onSubmit={saveSale}>
         <label>{t("Sale date")}<input type="date" value={form.saleDate} onChange={event => setForm({ ...form, saleDate: event.target.value })} required /></label>
         <label>{t("Payment method")}<select value={form.paymentMethod} onChange={event => setForm({ ...form, paymentMethod: event.target.value })}>{methods.map(([key, label]) => <option key={key} value={key}>{t(label)}</option>)}</select></label>
-        <label className="description-field">{t("Description")} <span className="field-hint">{t("optional")}</span><input type="text" value={form.description} onChange={event => setForm({ ...form, description: event.target.value })} placeholder={t("Short note, if useful")} maxLength={250} /></label>
         <div className="sale-items-editor">
           <div className="items-editor-heading"><div><h3>{t("Purchase items")}</h3><p>{t("Enter the quantity and selling price for each item.")}</p></div><button type="button" className="add-item-button" onClick={() => setForm({ ...form, items: [...form.items, newItem()] })}><Plus size={15} /> {t("Add item")}</button></div>
           <div className="item-list">{form.items.map((item, index) => {

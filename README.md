@@ -2,12 +2,18 @@
 
 Anita Clothing Shop uses a React/Vite client, an Express API, PostgreSQL, and server-enforced `ADMIN` / `STAFF` access. The app includes staff login and management, sale entry and history, a real-record sales dashboard, and admin-only reports and exports. Dashboard and report totals omit voided sales and use the shop's `Asia/Kolkata` business calendar; weekly reports run Monday through Sunday.
 
+## Shop summary
+
+Admins can open **Summary** in the sidebar. Choose From/To dates (Asia/Kolkata) for net sales, valid transaction counts, return credits, payment totals and gross profit before expenses. These reuse the Reports calculations, including missing-cost warnings and void exclusions. The separate current-stock section shows units, product counts, active low/out-of-stock counts and value at recorded purchase cost; it includes archived stock, excludes removed products and is not historical stock for the selected dates. Unknown costs are excluded and disclosed. Use **Refresh summary** to reload both sections. English and Marathi labels are supported. No migration or additional configuration is required.
+
 ## Requirements
 
 - Node.js 20 or newer and npm
 - PostgreSQL 14 or newer (local or hosted, including Supabase PostgreSQL)
 
 ## Configure
+
+For shared online access using Vercel and hosted PostgreSQL, follow [the Vercel setup guide](docs/VERCEL.md). Local PostgreSQL is not reachable from Vercel, and deployment does not automatically transfer local records.
 
 1. Copy `.env.example` to `.env` in the repository root.
 2. Set `DATABASE_URL` to the PostgreSQL connection string. For a hosted database that requires TLS, set `DATABASE_SSL=true` in `.env`.

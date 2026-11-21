@@ -71,6 +71,30 @@ test('inventory reads require login; staff cannot create, adjust, edit, or read 
   assert.equal((await api(`/inventory/${p.id}/movements`,'GET',null,staff)).status,403)
 })
 
+test('stock summary is admin-only and aggregates exact current values including archived stock', async () => {
+  assert.equal((await api('/inventory/summary','GET',null,staff)).status,403)
+  assert.equal((await api('/inventory/summary','GET',null,'')).status,401)
+  const before = (await api('/inventory/summary')).body
+  await product(2,{purchaseRate:'0.15',reorderLevel:3})
+  const archived = await product(3,{purchaseRate:'0.20'})
+  await pool.query('UPDATE inventory_products SET is_active=false WHERE id=$1',[archived.id])
+  await product(0)
+  const unknown = await product(4)
+  await pool.query('UPDATE inventory_products SET purchase_cost=NULL WHERE id=$1',[unknown.id])
+  const removed = await product(0)
+  await pool.query("UPDATE inventory_products SET removed_at=now(),removed_by=$2,is_active=false,removal_reason='Summary test removal' WHERE id=$1",[removed.id,accounts[0].id])
+  const response = await api('/inventory/summary')
+  assert.equal(response.status,200)
+  const after = response.body
+  assert.equal(after.productCount-before.productCount,4)
+  assert.equal(BigInt(after.availableUnits)-BigInt(before.availableUnits),9n)
+  assert.equal(after.lowStockCount-before.lowStockCount,2)
+  assert.equal(after.outOfStockCount-before.outOfStockCount,1)
+  assert.equal(subtractMoney(after.stockValue,before.stockValue),'0.90')
+  assert.equal(BigInt(after.missingCostUnits)-BigInt(before.missingCostUnits),4n)
+  assert.ok(Number.isFinite(Date.parse(after.asOf)))
+})
+
 test('product setup is idempotent; SKU/barcode uniqueness, validation, search and low-stock filters work', async () => {
   const p=await product(2,{barcode:randomUUID()})
   const duplicate=await api('/inventory','POST',p.input)
