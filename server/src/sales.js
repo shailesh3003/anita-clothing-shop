@@ -110,7 +110,7 @@ router.get('/', async (req, res, next) => {
   const { from = null, to = null, page } = parsed.data
   const pageSize = 25
   const offset = (page - 1) * pageSize
-  const creatorFilter = req.user.role === 'ADMIN' ? null : req.user.id
+  const creatorFilter = null // Shared shop history; corrections and cost data remain admin-only.
   try {
     const count = await pool.query(
       `SELECT count(*)::int AS total FROM sales s

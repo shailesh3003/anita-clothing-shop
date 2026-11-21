@@ -219,17 +219,24 @@ test('weekly report is Monday through Sunday', async () => {
   assert.equal(new Date(`${report.to}T12:00:00Z`) - new Date(`${report.from}T12:00:00Z`), 6 * 24 * 60 * 60 * 1000)
 })
 
-test('staff dashboard totals are scoped to that staff member', async () => {
+test('staff dashboard shares all shop totals and recent sales but never profit', async () => {
+  const adminSale = await pool.query("INSERT INTO sales(sale_date,total_amount,payment_method,created_by) VALUES ((now() AT TIME ZONE 'Asia/Kolkata')::date,12.34,'CASH',$1) RETURNING id", [adminId])
+  saleIds.push(adminSale.rows[0].id)
   const response = await fetch(`${baseUrl}/api/dashboard`, { headers: { cookie: staffCookie } })
   assert.equal(response.status, 200)
   const dashboard = await response.json()
-  assert.equal(dashboard.today.totalAmount, '77.77')
-  assert.equal(dashboard.today.transactionCount, 1)
-  assert.equal(dashboard.today.payments.CARD, '77.77')
-  assert.equal(dashboard.recentSales.length, 1)
+  const admin = await (await fetch(`${baseUrl}/api/dashboard`, { headers: { cookie: adminCookie } })).json()
+  const { profit: _profit, ...publicTotals } = admin.today
+  assert.ok(_profit)
+  assert.deepEqual(dashboard.today, publicTotals)
+  assert.equal(dashboard.weekTotal, admin.weekTotal)
+  assert.equal(dashboard.monthTotal, admin.monthTotal)
+  assert.deepEqual(dashboard.recentSales, admin.recentSales)
+  assert.equal('profit' in dashboard.today, false)
+  assert.ok(dashboard.recentSales.some(sale => sale.id === adminSale.rows[0].id))
 })
 
-test('sale entry validates inputs, prevents duplicate submissions, and filters staff history', async () => {
+test('sale entry validates inputs, prevents duplicates, and shares shop history without costs', async () => {
   const todayResult = await pool.query("SELECT to_char((now() AT TIME ZONE 'Asia/Kolkata')::date, 'YYYY-MM-DD') AS today")
   const today = todayResult.rows[0].today
   workflowSaleDate = today
@@ -266,9 +273,11 @@ test('sale entry validates inputs, prevents duplicate submissions, and filters s
   const staffHistory = await fetch(`${baseUrl}/api/sales?from=${today}&to=${today}`, { headers: { cookie: staffCookie } })
   const staffRows = (await staffHistory.json()).sales
   assert.ok(staffRows.some(sale => sale.id === created.sale.id))
-  assert.ok(staffRows.every(sale => sale.createdBy === staffId))
+  assert.ok(staffRows.every(sale => !('grossProfit' in sale) && sale.items.every(item => !('unitCost' in item))))
   const adminHistory = await fetch(`${baseUrl}/api/sales?from=${today}&to=${today}`, { headers: { cookie: adminCookie } })
-  assert.ok((await adminHistory.json()).sales.some(sale => sale.id === created.sale.id))
+  assert.deepEqual(staffRows.map(sale => sale.id), (await adminHistory.json()).sales.map(sale => sale.id))
+  const allHistory = await (await fetch(`${baseUrl}/api/sales?from=2026-10-01&to=2026-10-12`, { headers: { cookie: staffCookie } })).json()
+  assert.ok(allHistory.sales.some(sale => sale.id === saleIds[0] && sale.createdBy === adminId))
 })
 
 test('multi-item totals use exact cents; admin item edits replace rows and audit before/after details', async () => {

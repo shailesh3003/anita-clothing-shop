@@ -5,7 +5,8 @@ import { profitForRange } from './profit.js'
 const router = Router()
 
 router.get('/', async (req, res, next) => {
-  const staffId = req.user.role === 'ADMIN' ? null : req.user.id
+  // All authenticated shop staff share sales visibility; profit remains admin-only.
+  const staffId = null
   try {
     const summary = await pool.query(
       `WITH local_today AS (

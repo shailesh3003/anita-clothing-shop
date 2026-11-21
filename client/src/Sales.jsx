@@ -188,7 +188,7 @@ export default function Sales({ user }) {
     </section>
 
     <section className="sales-history" aria-labelledby="history-title">
-      <div className="history-heading"><div><p className="eyebrow">{t("RECENT RECORDS")}</p><h2 id="history-title">{t("Sales history")}</h2><p className="history-subtitle">{user.role === 'ADMIN' ? t("All staff entries") : t("Your recorded sales")}</p></div></div>
+      <div className="history-heading"><div><p className="eyebrow">{t("RECENT RECORDS")}</p><h2 id="history-title">{t("Sales history")}</h2><p className="history-subtitle">{t("All staff entries")}</p></div></div>
       <form className="date-filter" onSubmit={applyFilters}>
         <label>{t("From")}<input type="date" value={fromInput} max={toInput || undefined} onChange={event => setFromInput(event.target.value)} /></label>
         <label>{t("To")}<input type="date" value={toInput} min={fromInput || undefined} onChange={event => setToInput(event.target.value)} /></label>

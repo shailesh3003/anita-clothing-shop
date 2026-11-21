@@ -53,7 +53,7 @@ export function Dashboard({ user }) {
   if (error) return <p className="insight-error" role="alert">{t(error)}</p>
   const payments = data.today.payments
   return <div className="insights-page">
-    <div className="insight-heading"><div><p className="eyebrow">{user.role === 'ADMIN' ? t("SHOP OVERVIEW") : t("YOUR SALES")}</p><h2>{t("Today at the shop")}</h2><p>{t("Real recorded sales, with voided entries excluded.")}</p></div><span className="business-date">{dateLabel(new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()), locale)}</span></div>
+    <div className="insight-heading"><div><p className="eyebrow">{t("SHOP OVERVIEW")}</p><h2>{t("Today at the shop")}</h2><p>{t("Real recorded sales, with voided entries excluded.")}</p></div><span className="business-date">{dateLabel(new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()), locale)}</span></div>
     <section className="metric-grid" aria-label={t("Sales totals")}>
       <article className="metric-card metric-primary"><span>{t("Today's sales")}</span><strong>{amount(data.today.totalAmount)}</strong><small>{data.today.transactionCount} {data.today.transactionCount === 1 ? t("transaction") : t("transactions")}</small></article>
       <article className="metric-card"><span>{t("This week")}</span><strong>{amount(data.weekTotal)}</strong><small>{t("Monday to today")}</small></article>
@@ -67,7 +67,7 @@ export function Dashboard({ user }) {
     </section>
     <section className="insight-panel recent-panel">
       <div className="insight-panel-heading"><div><p className="eyebrow">{t("LATEST RECORDS")}</p><h3>{t("Recent sales")}</h3></div></div>
-      {data.recentSales.length === 0 ? <p className="insight-status">{t("No recorded sales yet.")}</p> : <div className="insight-table-wrap"><table className="insight-table"><thead><tr><th>{t("Date & time")}</th><th>{t("Items")}</th><th>{t("Amount")}</th><th>{t("Payment")}</th>{user.role === 'ADMIN' && <th>{t("Staff")}</th>}</tr></thead><tbody>{data.recentSales.map(sale => <tr key={sale.id}><td>{dateLabel(sale.saleDate, locale)}<span className="insight-subtext">{timeLabel(sale.createdAt, locale)}</span></td><td>{itemSummary(sale.items, t)}</td><td className="insight-money">{amount(sale.totalAmount)}</td><td>{t(methodLabels[sale.paymentMethod])}</td>{user.role === 'ADMIN' && <td>{sale.createdByName}</td>}</tr>)}</tbody></table></div>}
+      {data.recentSales.length === 0 ? <p className="insight-status">{t("No recorded sales yet.")}</p> : <div className="insight-table-wrap"><table className="insight-table"><thead><tr><th>{t("Date & time")}</th><th>{t("Items")}</th><th>{t("Amount")}</th><th>{t("Payment")}</th><th>{t("Staff")}</th></tr></thead><tbody>{data.recentSales.map(sale => <tr key={sale.id}><td>{dateLabel(sale.saleDate, locale)}<span className="insight-subtext">{timeLabel(sale.createdAt, locale)}</span></td><td>{itemSummary(sale.items, t)}</td><td className="insight-money">{amount(sale.totalAmount)}</td><td>{t(methodLabels[sale.paymentMethod])}</td><td>{sale.createdByName}</td></tr>)}</tbody></table></div>}
     </section>
   </div>
 }

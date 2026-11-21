@@ -491,7 +491,7 @@ test('unlinked historical returns stay under inspection and unknown costs are no
   assert.equal(report.summary.totalAmount,'-100.00');assert.equal(report.summary.profit.grossProfit,'0.00');assert.equal(report.summary.profit.missingCostTransactions,1)
 })
 
-test('today dashboard subtracts refunds by their actual method and keeps staff figures scoped',async()=>{
+test('today shared dashboard subtracts refunds by their actual method and hides staff profit',async()=>{
   const today=(await pool.query("SELECT to_char(now() AT TIME ZONE 'Asia/Kolkata','YYYY-MM-DD') AS date")).rows[0].date
   const before=(await api('/dashboard','GET',null,staff)).body.today
   const p=await product(1,{purchaseRate:'100.00'}),sale=await returnSale(p,1,'150.00',today)
