@@ -1,5 +1,8 @@
 // Interface text only: shop records and API values are never translated.
 export const marathi = {
+  'Search name, SKU, barcode or purchase rate': 'नाव, SKU, बारकोड किंवा खरेदी दर शोधा',
+  'Purchase rate': 'खरेदी दर',
+  'Type a purchase rate, for example 250 or 250.50, to find matching products. Uses current average purchase cost rounded to two decimals.': 'वस्तू शोधण्यासाठी खरेदी दर टाका, उदा. 250 किंवा 250.50. सध्याचा सरासरी खरेदी दर दोन दशांशांपर्यंत वापरला जातो.',
   'Clear product': 'निवडलेली वस्तू काढा',
   'Summary': 'सारांश',
   'Shop summary': 'दुकानाचा सारांश',

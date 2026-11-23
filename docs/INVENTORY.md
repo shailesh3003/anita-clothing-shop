@@ -1,5 +1,7 @@
 # Inventory workflow and design
 
+On sale entry, Admins can type a purchase rate (for example `250` or `250.50`) in Inventory product to find products at that current average purchase cost, rounded to two decimal places. Matches show their purchase rate, SKU and available quantity. Name, SKU and barcode searches still work. Staff cannot search by purchase cost or see it in results; this is enforced by the inventory API.
+
 ## What this version tracks
 
 One inventory product is one independently countable variant, with a unique SKU, name, optional size, colour and barcode, purchase rate/average cost, available quantity, and low-stock threshold. Create separate SKUs for the same garment in different sizes or colours. Whole pieces are supported; weighted goods and fractional units require another design.

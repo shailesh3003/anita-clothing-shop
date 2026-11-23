@@ -95,6 +95,29 @@ test('stock summary is admin-only and aggregates exact current values including 
   assert.ok(Number.isFinite(Date.parse(after.asOf)))
 })
 
+test('admin purchase-rate search uses exact rounded cost and never reveals matches to staff', async () => {
+  const p = await product(2, { name: 'Rate lookup kurti', purchaseRate: '173.455555' })
+  for (const q of ['173.46', '173.460000']) {
+    const result = await api(`/inventory?q=${q}`)
+    assert.equal(result.status, 200)
+    assert.ok(result.body.products.some(row => row.id === p.id))
+    const staffResult = await api(`/inventory?q=${q}`, 'GET', null, staff)
+    assert.equal(staffResult.status, 200)
+    assert.ok(!staffResult.body.products.some(row => row.id === p.id))
+  }
+  assert.ok(!(await api('/inventory?q=173.45')).body.products.some(row => row.id === p.id))
+  for (const q of ['173.46oops', "173.46' OR 1=1--", '-173.46']) {
+    const result = await api(`/inventory?q=${encodeURIComponent(q)}`)
+    assert.equal(result.status, 200)
+    assert.ok(!result.body.products.some(row => row.id === p.id))
+  }
+  const named = await api('/inventory?q=Rate%20lookup', 'GET', null, staff)
+  assert.ok(named.body.products.some(row => row.id === p.id))
+  assert.ok(named.body.products.every(row => !('purchaseRate' in row)))
+  await pool.query('UPDATE inventory_products SET is_active=false WHERE id=$1', [p.id])
+  assert.ok(!(await api('/inventory?q=173.46')).body.products.some(row => row.id === p.id))
+})
+
 test('product setup is idempotent; SKU/barcode uniqueness, validation, search and low-stock filters work', async () => {
   const p=await product(2,{barcode:randomUUID()})
   const duplicate=await api('/inventory','POST',p.input)

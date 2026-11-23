@@ -3,7 +3,13 @@ import { useLanguage } from './language.jsx'
 
 export const productLabel = product => [product.name, product.size, product.color].filter(Boolean).join(' / ')
 
-export default function ProductPicker({ item, onChange, allowLegacy = false, refreshKey = 0 }) {
+function purchaseRateLabel(value) {
+  const [whole, fraction = ''] = String(value).split('.')
+  const cents = (BigInt(whole) * 1000000n + BigInt(fraction.padEnd(6, '0')) + 5000n) / 10000n
+  return `₹${cents / 100n}.${String(cents % 100n).padStart(2, '0')}`
+}
+
+export default function ProductPicker({ item, onChange, allowLegacy = false, refreshKey = 0, allowCostSearch = false }) {
   const { t } = useLanguage()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
@@ -60,19 +66,21 @@ export default function ProductPicker({ item, onChange, allowLegacy = false, ref
   return <div className="product-picker">
     <div className="product-combobox" onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) { setOpen(false); setSearch('') } }}>
       <label htmlFor={inputId}>{t('Inventory product')}</label>
-      <input id={inputId} role="combobox" autoComplete="off" aria-autocomplete="list" aria-expanded={open} aria-controls={listId} aria-activedescendant={open && !loading && active >= 0 ? `${listId}-${active}` : undefined} aria-busy={loading} value={open ? search : item.productId ? item.itemName : ''} onFocus={() => setOpen(true)} onChange={event => searchProducts(event.target.value)} onKeyDown={handleKey} placeholder={t('Search name, SKU or barcode')} maxLength={100} required={!allowLegacy} />
+      <input id={inputId} role="combobox" autoComplete="off" aria-autocomplete="list" aria-expanded={open} aria-controls={listId} aria-activedescendant={open && !loading && active >= 0 ? `${listId}-${active}` : undefined} aria-busy={loading} value={open ? search : item.productId ? item.itemName : ''} onFocus={() => setOpen(true)} onChange={event => searchProducts(event.target.value)} onKeyDown={handleKey} placeholder={t(allowCostSearch ? 'Search name, SKU, barcode or purchase rate' : 'Search name, SKU or barcode')} maxLength={100} required={!allowLegacy} />
       {open && <div className="product-results">
         {loading && <p className="picker-status" role="status">{t('Loading products…')}</p>}
         {error && <p className="sales-error" role="alert">{t(error)}</p>}
         <div id={listId} role="listbox" aria-label={t('Inventory product')}>
           {!loading && !error && result.products.map((product, index) => <button id={`${listId}-${index}`} type="button" role="option" aria-selected={product.id === item.productId} className={`product-option${active === index ? ' product-option-active' : ''}`} key={product.id} disabled={product.stock === 0 && product.id !== item.productId} onMouseDown={event => event.preventDefault()} onClick={() => choose(product)}>
             <strong>{productLabel(product)}</strong><span>{product.sku} · {t('Available')}: {product.stock}</span>
+            {allowCostSearch && product.purchaseRate != null && <span>{t('Purchase rate')}: {purchaseRateLabel(product.purchaseRate)}</span>}
           </button>)}
         </div>
         {!loading && !error && result.products.length === 0 && <p className="picker-status" role="status">{t('No products found. Ask an admin to add stock in Inventory.')}</p>}
         {!loading && !error && result.totalPages > 1 && <div className="picker-pages"><button type="button" disabled={page === 1} onClick={() => { setLoading(true); setPage(page - 1) }}>{t('Previous page')}</button><span>{page} / {result.totalPages}</span><button type="button" disabled={page >= result.totalPages} onClick={() => { setLoading(true); setPage(page + 1) }}>{t('Next page')}</button></div>}
       </div>}
     </div>
+    {allowCostSearch && <span className="field-hint">{t('Type a purchase rate, for example 250 or 250.50, to find matching products. Uses current average purchase cost rounded to two decimals.')}</span>}
     {item.productId && <button className="clear-product" type="button" onClick={() => choose(null)}>{t(allowLegacy ? 'Legacy item (not stock tracked)' : 'Clear product')}</button>}
     {allowLegacy && !item.productId && <label>{t('Item name')}<input value={item.itemName} maxLength={240} onChange={event => onChange({ ...item, itemName: event.target.value })} required /></label>}
     {selected && <><span className="field-hint">SKU: <strong>{selected.sku}</strong></span><span className="field-hint">{t('Available stock: {count}', { count: selected.stock })}</span></>}

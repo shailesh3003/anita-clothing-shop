@@ -71,9 +71,11 @@ router.get('/', async (req, res, next) => {
   const parsed = listQuery.safeParse(req.query)
   if (!parsed.success) return res.status(400).json({ error: 'Check the inventory search and filters.' })
   const { q, status, page } = parsed.data
+  const rateSearch = req.user.role === 'ADMIN' && /^\d{1,10}(?:\.\d{1,6})?$/.test(q) ? q : null
   if (status === 'removed' && req.user.role !== 'ADMIN') return res.status(403).json({ error: 'Administrator access is required.' })
   try {
-    const conditions = `WHERE (position(lower($1) in lower(p.name || ' ' || p.sku || ' ' || p.size || ' ' || p.color || ' ' || coalesce(p.barcode,''))) > 0)
+    const conditions = `WHERE (position(lower($1) in lower(p.name || ' ' || p.sku || ' ' || p.size || ' ' || p.color || ' ' || coalesce(p.barcode,''))) > 0
+      OR ($4::numeric IS NOT NULL AND round(p.purchase_cost,2) = round($4::numeric,2)))
       AND (($2 = 'removed' AND p.removed_at IS NOT NULL) OR ($2 <> 'removed' AND p.removed_at IS NULL))
       AND ($2 IN ('all','removed') OR ($2 = 'archived' AND NOT p.is_active) OR ($2 IN ('active','low') AND p.is_active))
       AND ($2 <> 'low' OR p.stock <= p.reorder_level)`
@@ -85,7 +87,7 @@ router.get('/', async (req, res, next) => {
         (SELECT coalesce(sum(ri.quantity),0)::text FROM sale_return_items ri JOIN sale_items si ON si.id=ri.sale_item_id WHERE si.product_id=p.id AND ri.condition='DAMAGED') AS damaged_returns,
         (SELECT to_char(max(m.purchase_date),'YYYY-MM-DD') FROM inventory_movements m WHERE m.product_id=p.id) AS last_purchase_date,
         count(*) OVER()::int AS total FROM inventory_products p ${conditions}
-        ORDER BY lower(p.name),p.sku LIMIT 25 OFFSET $3`, [q, status, (page - 1) * 25],
+        ORDER BY lower(p.name),p.sku LIMIT 25 OFFSET $3`, [q, status, (page - 1) * 25, rateSearch],
     )
     const total = result.rows[0]?.total || 0
     res.json({ products: result.rows.map(row => { const product = serialize(row); if (req.user.role !== 'ADMIN') { delete product.purchaseRate; delete product.grossProfit; delete product.missingCostUnits } return product }), page, total, totalPages: Math.ceil(total / 25) })
